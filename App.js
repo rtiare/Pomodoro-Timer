@@ -4,28 +4,31 @@ import { StyleSheet, Vibration, Text, SafeAreaView, View, TextInput, TouchableOp
 
 const App = props => {
 
+  //interval null
   let interval = null;
 
-  //pre-set number
-  const [currentWorkMin, setCurrentWorkMin] = useState('3');
-  const [currentWorkSec, sertCurrentWorkSec] = useState('0');
+  //pre-set number for work and break timer when app is first opened
+  //current - work; break - break
+  const [currentWorkMin, setCurrentWorkMin] = useState('0');
+  const [currentWorkSec, sertCurrentWorkSec] = useState('15');
   const [breakMins, setBreakMin] = useState('1');
-  const [breakSec, setBreakSec] = useState('0');
+  const [breakSec, setBreakSec] = useState('30');
 
-  //work-break message and their boolean
+  //work-break message that displays on top and boolean that decides which to show
   const [displayState, setDisplayState] = useState(false);
   const [displayMessage, setDisplayMessage] = useState('Work');
 
-  //paused and button(pause ? start) state
+  //paused and button(pause ? start) state which is decided by paused
   const [paused, setPaused] = useState(false);
   const [buttonState, setButtonState] = useState('Pause')
 
-  //final display state 
-  const [displayMin, setDisplayMin] = useState(currentWorkMin);
-  const [displaySec, setDisplaySec] = useState(currentWorkSec);
+  //final min and sec to display. App starts with pre-set work timer
+  const [displayMin, setDisplayMin] = useState(Number(currentWorkMin));
+  const [displaySec, setDisplaySec] = useState(Number(currentWorkSec));
 
   //useEffect hook to update based on if not paused, diplaySec, displayMin
   const timer = useEffect(() => {
+    //if not paused, then run these functions
     if(paused) {
       setButtonState('Pause');
       interval = setInterval(() => {
@@ -35,7 +38,7 @@ const App = props => {
         if (displaySec == 0) {
           if (displayMin != 0) {
             setDisplaySec(59);
-            setDisplayMin(displayMin - 1);
+            setDisplayMin(Number(displayMin - 1));
           }
           //if minutes is 0, start break or work: first number - work, second number - break
           else {
@@ -50,15 +53,15 @@ const App = props => {
 
             //set the time new break/work time
             clearInterval(interval)
-            setDisplayMin(min);
-            setDisplaySec(sec);
+            setDisplayMin(Number(min));
+            setDisplaySec(Number(sec));
             setDisplayState(!displayState);
 
           }
         }
         //if second not 0, lower by 1
         else {
-          setDisplaySec(displaySec - 1);
+          setDisplaySec(Number(displaySec - 1));
         }
       }, 1000);
     }
@@ -84,22 +87,22 @@ const App = props => {
   }
 
   const reset = () => {
-    //if false that means work running- stop process, and reset       
+    //if false that means work running- clear interval, and reset to work time      
     if (displayState == false) {
       clearInterval(interval)
 
       setDisplayMessage('Work')
-      var min = currentWorkMin
-      setDisplayMin(currentWorkMin)
-      setDisplaySec(currentWorkSec)
+      setDisplayMin(Number(currentWorkMin))
+      setDisplaySec(Number(currentWorkSec))
 
     }
+    //if true, that means clear interval and reset to break time
     else {
       clearInterval(interval)
 
       setDisplayMessage('Break')
-      setDisplayMin(breakMins)
-      setDisplaySec(breakSec)
+      setDisplayMin(Number(breakMins))
+      setDisplaySec(Number(breakSec))
 
     }
     //set button state and pause process
@@ -110,7 +113,7 @@ const App = props => {
 
   return (
     <SafeAreaView style={styles.safeAreaView}>
-      <KeyboardAvoidingView style={styles.container} behavior={Platform.OS == "ios" ? "padding" : null}> 
+      <KeyboardAvoidingView style={styles.container}> 
         <View style={styles.headerContainer} behavior="padding">
 
           <View style={styles.titleContainer} >
@@ -133,16 +136,20 @@ const App = props => {
 
             <View style={styles.workContainer}>
               <Text style={{fontWeight: 'bold'}}>Work Mins Time: </Text>
-              <TextInput style={styles.workInputMin} value={currentWorkMin} onChangeText={(text) => setCurrentWorkMin(text)}/>
+              <TextInput style={styles.workInputMin}  pattern="[0-9]*" keyboardType="numeric" 
+              value={currentWorkMin} onChangeText={(text) => setCurrentWorkMin(Number(text))}/>
               <Text style={{fontWeight: 'bold'}}>Sec: </Text>
-              <TextInput style={styles.workInputSec} value={currentWorkSec} onChangeText={(text) => sertCurrentWorkSec(text)} />
+              <TextInput style={styles.workInputSec} pattern="[0-9]*" keyboardType="numeric" 
+              value={currentWorkSec} onChangeText={(text) => sertCurrentWorkSec(Number(text))} />
             </View>
 
             <View behavior="padding" style={styles.breakContainer}>
               <Text style={{fontWeight: 'bold'}}>Break Mins Time: </Text>
-              <TextInput style={styles.breakInputMin} value={breakMins} onChangeText = {(text) => setBreakMin(text)} />
+              <TextInput style={styles.breakInputMin} pattern="[0-9]*" keyboardType="numeric" 
+              value={breakMins} onChangeText = {(text) => setBreakMin(Number(text))} />
               <Text style={{fontWeight: 'bold'}}>Sec: </Text>
-              <TextInput style={styles.breakInputSec} value={breakSec} onChangeText = {(text) => setBreakSec(text)} />
+              <TextInput style={styles.breakInputSec} pattern="[0-9]*" keyboardType="numeric" 
+              value={breakSec} onChangeText = {(text) => setBreakSec(Number(text))} />
             </View>
             
           </View>
