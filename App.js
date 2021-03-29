@@ -4,6 +4,7 @@ import { StyleSheet, Vibration, Text, SafeAreaView, View, TextInput, TouchableOp
 
 const App = props => {
 
+  //interval null
   let interval = null;
 
   //pre-set number for work and break timer when app is first opened
